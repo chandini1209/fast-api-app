@@ -43,14 +43,14 @@ def get_engine():
             f"@{host}:{port}/{db_name}"
         )
         print(f"DATABASE_URL: {DATABASE_URL}")
-        # _engine = create_engine(
-        #     DATABASE_URL,
-        #     pool_size=1,
-        #     max_overflow=0,
-        #     pool_pre_ping=True,
-        #     pool_recycle=300,
-        #     connect_args={"connect_timeout": 10, "sslmode": "require"}
-        # )
+        _engine = create_engine(
+            DATABASE_URL,
+            pool_size=1,
+            max_overflow=0,
+            pool_pre_ping=True,
+            pool_recycle=300,
+            connect_args={"connect_timeout": 10, "sslmode": "require"}
+        )
         
         logger.info("Database engine created successfully")
         return _engine
@@ -71,13 +71,3 @@ def get_session_local():
         )
 
     return _SessionLocal
-
-
-# FastAPI dependency
-def get_db():
-    SessionLocal = get_session_local()
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
