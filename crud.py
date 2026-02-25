@@ -18,12 +18,17 @@ def get_item(db: Session, item_id: int):
     return db.query(models.Item).filter(models.Item.id == item_id).first()
 
 
-def update_item(db: Session, item_id: int, item: schemas.ItemCreate):
-    db_item = get_item(db, item_id)
+def update_item(db: Session, item_id: int, item_update: schemas.ItemUpdate):
+    db_item = db.query(models.Item).filter(models.Item.id == item_id).first()
     if not db_item:
         return None
-    for key, value in item.model_dump().items():
+    
+    # .model_dump(exclude_unset=True) is the "magic" for partial updates
+    update_data = item_update.model_dump(exclude_unset=True)
+    
+    for key, value in update_data.items():
         setattr(db_item, key, value)
+    
     db.commit()
     db.refresh(db_item)
     return db_item
